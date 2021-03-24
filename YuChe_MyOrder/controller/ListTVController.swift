@@ -16,7 +16,7 @@ class ListTVController: UITableViewController {
         super.viewDidLoad()
         self.fetchAllCoffee()
         self.tableView.rowHeight = 70
-        
+        self.setUpLongPressGesture()
     }
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -39,23 +39,57 @@ class ListTVController: UITableViewController {
     //delete
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (indexPath.row < self.coffeeList.count){
-            self.deleteCOffeeFromList(indexPath: indexPath)
+            self.deleteCoffeeFromList(indexPath: indexPath)
         }
     }
-    private func deleteCOffeeFromList(indexPath: IndexPath){
+    private func deleteCoffeeFromList(indexPath: IndexPath){
         self.dbHelper.deleteCoffee(coffeeID: self.coffeeList[indexPath.row].id!)
         self.fetchAllCoffee()
     }
     //update
+    private func updateCoffee(indexPath: IndexPath,quantity: Int32){
+//        self.coffeeList[indexPath.row].quantity = quantity
+        self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath.row],quantity: quantity)
+        self.fetchAllCoffee()
+    }
     
-
+    private func setUpLongPressGesture(){
+        let longPressGesture: UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
+        longPressGesture.minimumPressDuration = 0.1 //0.1 second
+        print("Pressed")
+        self.tableView.addGestureRecognizer(longPressGesture)
+    }
+    @objc
+    private func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer){
+        if gestureRecognizer.state == .ended{
+            let touchPoint = gestureRecognizer.location(in: self.tableView)
+            if let indexPath = self.tableView.indexPathForRow(at: touchPoint){
+                self.displayUpdateCoffeeAlert(indexPath: indexPath, title: "Edit Quantity", message: "Please provide the updated number for this coffee order")
+            }
+        }
+    }
+    
+    private func displayUpdateCoffeeAlert(indexPath: IndexPath?, title: String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addTextField{(textField: UITextField) in
+            textField.text = String(self.coffeeList[indexPath!.row].quantity)
+        }
+//        let q = Int(self.tfQuan.text!) ?? 0
+//        let newQuantity = Int(alert.textFields?[0].text) ?? 0
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: {_ in
+            self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath!.row], quantity: Int32(3) )
+        }) )
+        self.present(alert, animated: true, completion: nil)
+    }
     
     private func fetchAllCoffee(){
         if (self.dbHelper.getAllCoffee() != nil){
             self.coffeeList = self.dbHelper.getAllCoffee()!
             self.tableView.reloadData()
         }else{
-            print(#function, "No data recieved from dbHelper")
+            print( "No data recieved from dbHelper")
         }
     }
 }

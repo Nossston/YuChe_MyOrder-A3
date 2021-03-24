@@ -65,16 +65,15 @@ class DatabaseHelper{
     }
     
     // update
-    func updateTask(updatedCoffee: MyOrder){
+    func updateCoffee(updatedCoffee: MyOrder, quantity : Int32){
         let searchResult = self.searchCoffee(coffeeID: updatedCoffee.id! as UUID)
-        
         if (searchResult != nil){
             do{
                 let coffeeToUpdate = searchResult!
-                coffeeToUpdate.size = updatedCoffee.size
-                coffeeToUpdate.quantity = updatedCoffee.quantity
-                coffeeToUpdate.type = updatedCoffee.type
-                
+//                coffeeToUpdate.size = updatedCoffee.size
+//                coffeeToUpdate.quantity = updatedCoffee.quantity
+                coffeeToUpdate.quantity = quantity
+//                coffeeToUpdate.type = updatedCoffee.type
                 try self.moc.save()
                 print(#function, "Coffee Data updated successfully")
                 
@@ -108,7 +107,7 @@ class DatabaseHelper{
         
         do{
             let result = try self.moc.fetch(fetchRequest)
-            print(#function, "Fetched data : \(result as [MyOrder])")
+//            print(#function, "Fetched data : \(result as [MyOrder])")
             return result as [MyOrder]
             
         }catch let error as NSError{

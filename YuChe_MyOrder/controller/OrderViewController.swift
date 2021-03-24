@@ -30,10 +30,9 @@ class OrderViewController: UIViewController {
     @objc func goToListScreen(){
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let ListTVC = storyboard.instantiateViewController(identifier: "ListTVC") as! ListTVController
-        // new change for A3
-//        ListTVC.coffeeSet = coffeeList
         self.navigationController?.pushViewController(ListTVC, animated: true)
     }
+    
     @IBAction func addCoffee(){
         let q = Int(self.tfQuan.text!) ?? 0
         let nCoffee = Coffee(type: self.coffeeTypeList[self.pkrCoffee.selectedRow(inComponent: 0)], size: self.segSize.titleForSegment(at: self.segSize.selectedSegmentIndex)!, quantity: Int32(q))
@@ -58,11 +57,14 @@ class OrderViewController: UIViewController {
         self.present(confirmAlert, animated: true, completion: nil)
     }
     
+    
+    // New Parts For A3
+    // retreive
     private func fetchAllCoffee(){
         if (self.dbHelper.getAllCoffee() != nil){
             self.coffeeList = self.dbHelper.getAllCoffee()!
         }else{
-            print(#function, "No data recieved from dbHelper")
+            print( "No data recieved from dbHelper")
         }
     }
     
@@ -90,7 +92,7 @@ extension OrderViewController : UIPickerViewDelegate, UIPickerViewDataSource{
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 //        print(#function, "Selected Coffee : \(self.coffeeTypeList[row])")
-        print("Selected Coffee : \(self.coffeeTypeList[row])")
+//        print("Selected Coffee : \(self.coffeeTypeList[row])")
 
         switch component {
         case 0:
