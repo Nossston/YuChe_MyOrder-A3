@@ -26,14 +26,15 @@ class OrderViewController: UIViewController {
     @objc func goToListScreen(){
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let ListTVC = storyboard.instantiateViewController(identifier: "ListTVC") as! ListTVController
-        ListTVC.coffeeSet = coffeeList
+        // new change for A3
+//        ListTVC.coffeeSet = coffeeList
         self.navigationController?.pushViewController(ListTVC, animated: true)
     }
     @IBAction func addCoffee(){
 //        print(self.tfQuan.hashValue)
         if (!self.tfQuan.text!.isEmpty) {
             let q = Int(self.tfQuan.text!) ?? 0
-            coffeeList.append(Coffee(type: self.coffeeTypeList[self.pkrCoffee.selectedRow(inComponent: 0)], size: self.segSize.titleForSegment(at: self.segSize.selectedSegmentIndex)!, quantity: q) )
+            coffeeList.append(Coffee(type: self.coffeeTypeList[self.pkrCoffee.selectedRow(inComponent: 0)], size: self.segSize.titleForSegment(at: self.segSize.selectedSegmentIndex)!, quantity: Int32(q)) )
             self.askConfirmation()
         }else{
             showError(errorMessage: "Must enter the quantity")

@@ -77,6 +77,7 @@
 				F78C278F25DAC0B700B6D177 /* Assets.xcassets */,
 				F78C279125DAC0B700B6D177 /* LaunchScreen.storyboard */,
 				F78C279425DAC0B700B6D177 /* Info.plist */,
+				F78C278725DAC0B500B6D177 /* ViewController.swift */,
 			);
 			path = YuChe_MyOrder;
 			sourceTree = "<group>";
@@ -92,7 +93,6 @@
 		F79C99DE260B3A12001EEA14 /* controller */ = {
 			isa = PBXGroup;
 			children = (
-				F78C278725DAC0B500B6D177 /* ViewController.swift */,
 				F7FCA57225DC13F000456228 /* OrderViewController.swift */,
 				F78C279E25DAC50000B6D177 /* ListTVController.swift */,
 				F79C99ED260B4488001EEA14 /* DatabaseHelper.swift */,

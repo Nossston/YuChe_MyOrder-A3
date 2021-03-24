@@ -26,11 +26,65 @@ class DatabaseHelper{
         self.moc = context
     }
 
+    // insert
+    func insertCoffee(newCoffee : Coffee ){
+        do{
+            let coffeeTobeAdded = NSEntityDescription.insertNewObject(forEntityName: ENTITY_NAME, into: self.moc) as! MyOrder
+            coffeeTobeAdded.size = newCoffee.size
+            coffeeTobeAdded.quantity = newCoffee.quantity
+            coffeeTobeAdded.id = UUID()
+            coffeeTobeAdded.createdDate = Date()
+            if self.moc.hasChanges{
+                try self.moc.save()
+                print(#function, "Coffee Data inserted successfully")
+            }
+        }catch let error as NSError{
+            print(#function, "Could not save the data \(error) ")
+        }
+    }
+    // search
+    func searchTask(taskID : UUID) ->MyOrder?{
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ENTITY_NAME)
+        let predicateID = NSPredicate(format: "id == %@", taskID as CVarArg)
+        fetchRequest.predicate = predicateID
+        
+        do{
+            
+            let result = try self.moc.fetch(fetchRequest)
+            
+            if result.count > 0{
+                return result.first as? MyOrder
+            }
+            
+        }catch let error as NSError{
+            print("Unable to search coffee \(error)")
+        }
+        
+        return nil
+    }
+    
+    // update
+    func updateTask(updatedCoffee: MyOrder){
+        let searchResult = self.searchTask(taskID: updatedCoffee.id! as UUID)
+        
+        if (searchResult != nil){
+            do{
+                let coffeeToUpdate = searchResult!
+                
+                
+                try self.moc.save()
+                print(#function, "Task updated successfully")
+                
+            }catch let error as NSError{
+                print(#function, "Unable to search coffee \(error)")
+            }
+        }
+    }
+
     
     
-    
-    //
-    func getAllTodos() -> [MyOrder]?{
+    //retreive
+    func getAllCoffee() -> [MyOrder]?{
         let fetchRequest = NSFetchRequest<MyOrder>(entityName: ENTITY_NAME)
         fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: "dateCreated", ascending: true)]
         
