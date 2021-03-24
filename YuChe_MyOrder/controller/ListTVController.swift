@@ -48,15 +48,13 @@ class ListTVController: UITableViewController {
     }
     //update
     private func updateCoffee(indexPath: IndexPath,quantity: Int32){
-//        self.coffeeList[indexPath.row].quantity = quantity
-        self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath.row],quantity: quantity)
+        self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath.row],nquantity: quantity)
         self.fetchAllCoffee()
     }
     
     private func setUpLongPressGesture(){
         let longPressGesture: UILongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        longPressGesture.minimumPressDuration = 0.1 //0.1 second
-        print("Pressed")
+        longPressGesture.minimumPressDuration = 1 //1 second
         self.tableView.addGestureRecognizer(longPressGesture)
     }
     @objc
@@ -74,12 +72,13 @@ class ListTVController: UITableViewController {
         alert.addTextField{(textField: UITextField) in
             textField.text = String(self.coffeeList[indexPath!.row].quantity)
         }
-//        let q = Int(self.tfQuan.text!) ?? 0
-//        let newQuantity = Int(alert.textFields?[0].text) ?? 0
-        
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: {_ in
-            self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath!.row], quantity: Int32(3) )
+            if let quantityText = alert.textFields?[0].text {
+                // break when entering chars
+                self.dbHelper.updateCoffee(updatedCoffee: self.coffeeList[indexPath!.row], nquantity: Int32(quantityText)! ?? 0 )
+                self.fetchAllCoffee()
+            }
         }) )
         self.present(alert, animated: true, completion: nil)
     }

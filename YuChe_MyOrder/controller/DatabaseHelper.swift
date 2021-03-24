@@ -65,14 +65,14 @@ class DatabaseHelper{
     }
     
     // update
-    func updateCoffee(updatedCoffee: MyOrder, quantity : Int32){
+    func updateCoffee(updatedCoffee: MyOrder, nquantity : Int32){
         let searchResult = self.searchCoffee(coffeeID: updatedCoffee.id! as UUID)
         if (searchResult != nil){
             do{
                 let coffeeToUpdate = searchResult!
 //                coffeeToUpdate.size = updatedCoffee.size
 //                coffeeToUpdate.quantity = updatedCoffee.quantity
-                coffeeToUpdate.quantity = quantity
+                coffeeToUpdate.quantity = nquantity
 //                coffeeToUpdate.type = updatedCoffee.type
                 try self.moc.save()
                 print(#function, "Coffee Data updated successfully")
