@@ -29,7 +29,7 @@ class DatabaseHelper{
     
     
     
-    // 
+    //
     func getAllTodos() -> [MyOrder]?{
         let fetchRequest = NSFetchRequest<MyOrder>(entityName: ENTITY_NAME)
         fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: "dateCreated", ascending: true)]
