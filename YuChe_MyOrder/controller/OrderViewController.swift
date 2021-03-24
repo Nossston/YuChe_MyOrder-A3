@@ -9,7 +9,11 @@ import UIKit
 
 class OrderViewController: UIViewController {
 
-    var coffeeList = [Coffee]()
+//    var coffeeList = [Coffee]()
+    // new List for A3
+    private var coffeeList : [MyOrder] = [MyOrder]()
+    private let dbHelper = DatabaseHelper.getInstance()
+    
     @IBOutlet var pkrCoffee : UIPickerView!
     @IBOutlet var segSize : UISegmentedControl!
     @IBOutlet var tfQuan : UITextField!
@@ -31,14 +35,13 @@ class OrderViewController: UIViewController {
         self.navigationController?.pushViewController(ListTVC, animated: true)
     }
     @IBAction func addCoffee(){
-//        print(self.tfQuan.hashValue)
-        if (!self.tfQuan.text!.isEmpty) {
-            let q = Int(self.tfQuan.text!) ?? 0
-            coffeeList.append(Coffee(type: self.coffeeTypeList[self.pkrCoffee.selectedRow(inComponent: 0)], size: self.segSize.titleForSegment(at: self.segSize.selectedSegmentIndex)!, quantity: Int32(q)) )
-            self.askConfirmation()
-        }else{
-            showError(errorMessage: "Must enter the quantity")
-        }
+        let q = Int(self.tfQuan.text!) ?? 0
+        let nCoffee = Coffee(type: self.coffeeTypeList[self.pkrCoffee.selectedRow(inComponent: 0)], size: self.segSize.titleForSegment(at: self.segSize.selectedSegmentIndex)!, quantity: Int32(q))
+        self.dbHelper.insertCoffee(newCoffee: nCoffee)
+//        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+//        let ListTVC = storyboard.instantiateViewController(identifier: "ListTVC") as! ListTVController
+//        ListTVC.fetchAllCoffee()
+        self.fetchAllCoffee()
     }
     
     func showError(errorMessage: String){
@@ -54,7 +57,15 @@ class OrderViewController: UIViewController {
         confirmAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil) )
         self.present(confirmAlert, animated: true, completion: nil)
     }
-
+    
+    private func fetchAllCoffee(){
+        if (self.dbHelper.getAllCoffee() != nil){
+            self.coffeeList = self.dbHelper.getAllCoffee()!
+        }else{
+            print(#function, "No data recieved from dbHelper")
+        }
+    }
+    
 }
 
 extension OrderViewController : UIPickerViewDelegate, UIPickerViewDataSource{

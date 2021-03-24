@@ -3,6 +3,7 @@
 //  YuChe_MyOrder
 //
 //  Created by YuChe Liu on 2021/2/15.
+
 import UIKit
 class ListTVController: UITableViewController {
 //    var coffeeSet = [Coffee]()
@@ -33,6 +34,21 @@ class ListTVController: UITableViewController {
         cell.lblSize.text = coffee.size
         return cell
     }
+    
+    // A3 New Parts
+    //delete
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (indexPath.row < self.coffeeList.count){
+            self.deleteCOffeeFromList(indexPath: indexPath)
+        }
+    }
+    private func deleteCOffeeFromList(indexPath: IndexPath){
+        self.dbHelper.deleteCoffee(coffeeID: self.coffeeList[indexPath.row].id!)
+        self.fetchAllCoffee()
+    }
+    //update
+    
+
     
     private func fetchAllCoffee(){
         if (self.dbHelper.getAllCoffee() != nil){

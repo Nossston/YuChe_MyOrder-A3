@@ -32,8 +32,9 @@ class DatabaseHelper{
             let coffeeTobeAdded = NSEntityDescription.insertNewObject(forEntityName: ENTITY_NAME, into: self.moc) as! MyOrder
             coffeeTobeAdded.size = newCoffee.size
             coffeeTobeAdded.quantity = newCoffee.quantity
+            coffeeTobeAdded.type = newCoffee.type
             coffeeTobeAdded.id = UUID()
-            coffeeTobeAdded.createdDate = Date()
+            coffeeTobeAdded.dateCreated = Date()
             if self.moc.hasChanges{
                 try self.moc.save()
                 print(#function, "Coffee Data inserted successfully")
@@ -43,9 +44,9 @@ class DatabaseHelper{
         }
     }
     // search
-    func searchTask(taskID : UUID) ->MyOrder?{
+    func searchCoffee(coffeeID : UUID) ->MyOrder?{
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ENTITY_NAME)
-        let predicateID = NSPredicate(format: "id == %@", taskID as CVarArg)
+        let predicateID = NSPredicate(format: "id == %@", coffeeID as CVarArg)
         fetchRequest.predicate = predicateID
         
         do{
@@ -65,15 +66,17 @@ class DatabaseHelper{
     
     // update
     func updateTask(updatedCoffee: MyOrder){
-        let searchResult = self.searchTask(taskID: updatedCoffee.id! as UUID)
+        let searchResult = self.searchCoffee(coffeeID: updatedCoffee.id! as UUID)
         
         if (searchResult != nil){
             do{
                 let coffeeToUpdate = searchResult!
-                
+                coffeeToUpdate.size = updatedCoffee.size
+                coffeeToUpdate.quantity = updatedCoffee.quantity
+                coffeeToUpdate.type = updatedCoffee.type
                 
                 try self.moc.save()
-                print(#function, "Task updated successfully")
+                print(#function, "Coffee Data updated successfully")
                 
             }catch let error as NSError{
                 print(#function, "Unable to search coffee \(error)")
@@ -81,12 +84,27 @@ class DatabaseHelper{
         }
     }
 
-    
+    // delete
+    func deleteCoffee(coffeeID : UUID){
+        let searchResult = self.searchCoffee(coffeeID: coffeeID)
+        if (searchResult != nil) {
+            do{
+                self.moc.delete(searchResult!)
+//                let delegate = UIApplication.shared.delegate as! AppDelegate
+//                delegate.saveContext()
+                try self.moc.save()
+                print(#function, "Coffee deleted successfully")
+
+            }catch let error as NSError{
+                print("Unable to delete Coffee \(error)")
+            }
+        }
+    }
     
     //retreive
     func getAllCoffee() -> [MyOrder]?{
         let fetchRequest = NSFetchRequest<MyOrder>(entityName: ENTITY_NAME)
-        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: "dateCreated", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: "dateCreated", ascending: false)]
         
         do{
             let result = try self.moc.fetch(fetchRequest)
